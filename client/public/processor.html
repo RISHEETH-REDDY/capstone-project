@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        async function process(name, src) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.onload = () => {
+                    const canvas = document.getElementById('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imageData.data;
+                    for (let i = 0; i < data.length; i += 4) {
+                        // If near white, set transparency
+                        if (data[i] > 240 && data[i+1] > 240 && data[i+2] > 240) {
+                            data[i+3] = 0;
+                        }
+                    }
+                    ctx.putImageData(imageData, 0, 0);
+                    const dataUrl = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.id = name + '_link';
+                    link.href = dataUrl;
+                    link.download = name + '.png';
+                    document.body.appendChild(link);
+                    console.log('Processed ' + name);
+                    resolve(dataUrl);
+                };
+                img.src = src;
+            });
+        }
+        
+        // This will be called via browser_run_javascript
+        window.processImages = async (studentSrc, teacherSrc) => {
+            await process('student', studentSrc);
+            await process('teacher', teacherSrc);
+            return "DONE";
+        };
+    </script>
+</body>
+</html>

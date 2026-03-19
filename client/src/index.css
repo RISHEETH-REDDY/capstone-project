@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+  /* Global Colors (Dynamic via Variables) */
+  --color-brand-primary: var(--brand-primary, #0e8ad9);
+  --color-brand-50: var(--brand-50, #f0f7ff);
+  --color-brand-100: var(--brand-100, #e0effe);
+  --color-brand-500: var(--brand-primary, #0e8ad9);
+  --color-brand-600: var(--brand-600, #026fb9);
+
+  --color-accent-pink: #f472b6;
+  --color-accent-violet: #8b5cf6;
+  --color-accent-emerald: #10b981;
+
+  --color-surface-dark: #0f172a;
+  --color-surface-darker: #020617;
+
+  --color-bg-main: var(--bg-main);
+  --color-bg-card: var(--bg-card);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-border-main: var(--border-main);
+}
+
+@layer base {
+  :root {
+    --bg-main: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-main: #f1f5f9;
+
+    /* Default Accent (Blue) */
+    --brand-primary: #0e8ad9;
+    --brand-50: #f0f7ff;
+    --brand-100: #e0effe;
+    --brand-600: #026fb9;
+  }
+
+  /* Accent Variants */
+  [data-accent="emerald"] {
+    --brand-primary: #10b981;
+    --brand-50: #ecfdf5;
+    --brand-100: #d1fae5;
+    --brand-600: #059669;
+  }
+
+  [data-accent="violet"] {
+    --brand-primary: #8b5cf6;
+    --brand-50: #f5f3ff;
+    --brand-100: #ede9fe;
+    --brand-600: #7c3aed;
+  }
+
+}
+
+/* Dark Theme - High Specificity resonance */
+html.dark {
+  --bg-main: #020617;
+  --bg-card: #0f172a;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-main: #1e293b;
+
+  /* Adjust Accents for Dark Mode if needed */
+  --brand-50: rgba(14, 138, 217, 0.1);
+  --brand-100: rgba(14, 138, 217, 0.2);
+}
+
+@layer base {
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    @apply font-sans antialiased transition-colors duration-300;
+    background-image:
+      radial-gradient(at 0% 0%, var(--brand-primary, rgba(14, 138, 217, 0.05)) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(244, 114, 182, 0.03) 0px, transparent 50%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display tracking-tight font-bold;
+    color: var(--text-main);
+  }
+}
+
+@layer components {
+
+  /* Ultra Glassmorphism */
+  .glass-panel {
+    @apply backdrop-blur-xl border shadow-xl;
+    background-color: color-mix(in srgb, var(--bg-card), transparent 30%);
+    border-color: var(--border-main);
+  }
+
+  .glass-card {
+    @apply backdrop-blur-lg border shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1;
+    background-color: color-mix(in srgb, var(--bg-card), transparent 20%);
+    border-color: var(--border-main);
+  }
+
+  /* High-Impact Buttons */
+  .btn-vibrant {
+    @apply px-6 py-3 bg-brand-500 text-white rounded-2xl font-bold transition-all shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2;
+    background: linear-gradient(135deg, var(--color-brand-500) 0%, oklch(0.5 0.25 280) 100%);
+  }
+
+  .btn-outline {
+    @apply px-6 py-3 bg-bg-card text-brand-600 border-2 border-brand-100 rounded-2xl font-bold transition-all hover:bg-brand-50 hover:border-brand-100 active:scale-95;
+  }
+
+  /* Pro Navigation Styles */
+  .nav-active {
+    @apply shadow-sm border;
+    background-color: var(--brand-50);
+    color: var(--brand-primary);
+    border-color: var(--brand-100);
+  }
+
+  .nav-inactive {
+    @apply hover:text-white transition-colors opacity-60 hover:opacity-100;
+    color: var(--text-muted);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-accent-violet;
+  }
+
+  /* Card V2 - Using standard CSS for complex shadows to avoid @apply crash */
+  .pro-card {
+    @apply rounded-[24px] p-6 border transition-all;
+    background-color: var(--bg-card);
+    border-color: var(--border-main);
+    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.04);
+  }
+
+  .pro-card:hover {
+    @apply -translate-y-1;
+    box-shadow: 0px 20px 50px rgba(8, 112, 184, 0.07);
+  }
+
+  /* Animated Floating */
+  @keyframes floating {
+    0% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  .animate-floating {
+    animation: floating 3s ease-in-out infinite;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+}
+
+@keyframes blink-green {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes blink-yellow {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-blink-green {
+  animation: blink-green 1.5s infinite;
+}
+
+.animate-blink-yellow {
+  animation: blink-yellow 1.5s infinite;
+}

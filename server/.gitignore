@@ -1,0 +1,9 @@
+node_modules
+.env
+*.log
+db_dump.json
+distribution_response.json
+summary_response.json
+verification.log
+verification_output.txt
+SmartClass_Final_Scaled (1).xlsx

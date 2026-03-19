@@ -1,0 +1,24 @@
+
+--- Sheet: Students ---
+Headers: ["name","rollNumber","email","password","department","section","batch","createdAt"]
+First Row Data: ["Pooja Chauhan","CSEA001","poojachauhan.csea001@college.edu","password123","CSE","A","CSE1A","2025-11-17T18:57:35.265273"]
+
+--- Sheet: Teachers ---
+Headers: ["name","email","password","department"]
+First Row Data: ["Aditya Khan","adityakhan.cse@college.edu","password123","CSE"]
+
+--- Sheet: Classrooms ---
+Headers: ["roomNumber","building","capacity"]
+First Row Data: ["R001","C",98]
+
+--- Sheet: Subjects ---
+Headers: ["name","code","department","semester"]
+First Row Data: ["CSE Subject 1","CS101","CSE",5]
+
+--- Sheet: Batches ---
+Headers: ["name","department","section"]
+First Row Data: ["CSE1A","CSE","A"]
+
+--- Sheet: Timetable ---
+Headers: ["department","section","batch","day","subject","teacher","classroom","startTime","endTime","slotIndex","week"]
+First Row Data: ["BIO-TECH","A","BIO-TECH3A","Mon","BI540","Rohan Naidu","R037","10:00","11:00",1,1]
