@@ -211,7 +211,18 @@ router.post('/timetable/clash-check', async (req, res) => {
     }
 });
 
-// Manual Insertion
+// Manual Insertion (Supports both /timetable and /timetable/insert for compatibility)
+router.post('/timetable', async (req, res) => {
+    try {
+        const newEntry = new Timetable(req.body);
+        await newEntry.save();
+        res.status(201).json(newEntry);
+    } catch (err) {
+        console.error('Error inserting timetable entry:', err);
+        res.status(400).json({ error: err.message });
+    }
+});
+
 router.post('/timetable/insert', async (req, res) => {
     try {
         const newEntry = new Timetable(req.body);
@@ -244,9 +255,9 @@ router.post('/timetable/bulk', async (req, res) => {
 
 // Generate Timetable
 router.post('/generate', async (req, res) => {
-    // ... (rest of the generate logic remains same)
     try {
-        const { batches } = req.body; // Expecting list of batches with sizes, IDs
+        const { batches, sessionsPerSubject = 3 } = req.body; 
+        
         // Fetch all resources
         const classrooms = await Classroom.find();
         const faculties = await Faculty.find();
@@ -256,16 +267,13 @@ router.post('/generate', async (req, res) => {
             return res.status(400).json({ error: 'No batches provided' });
         }
 
-        // Run algorithm
-        const schedule = await generateSchedule(batches, subjects, faculties, classrooms);
+        // Run Graph Coloring algorithm
+        const schedule = await generateSchedule(batches, subjects, faculties, classrooms, sessionsPerSubject);
         
-        // Save to DB (optional, or just return)
-        // await Timetable.insertMany(schedule.map(s => ({...s, subject: s.subject._id, faculty: s.faculty._id, classroom: s.classroom._id})));
-
         res.json(schedule);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Generation failed' });
+        console.error('Generation Error:', err);
+        res.status(500).json({ error: 'Generation failed: ' + err.message });
     }
 });
 
@@ -419,13 +427,11 @@ router.get('/analytics/room-utilization', async (req, res) => {
         ]);
         
         let fullyUtilized = 0;
-        let moderatelyUtilized = 0;
         let underUtilized = 0;
         
         usageData.forEach(room => {
-            const percentage = (room.usedSlots / totalSlotsPerWeek) * 100;
-            if (percentage > 80) fullyUtilized++;
-            else if (percentage >= 40) moderatelyUtilized++;
+            const avgSlotsPerDay = room.usedSlots / 6; // Assuming 6 working days
+            if (avgSlotsPerDay > 4) fullyUtilized++;
             else underUtilized++;
         });
 
@@ -435,9 +441,8 @@ router.get('/analytics/room-utilization', async (req, res) => {
         if(unusedRooms > 0) underUtilized += unusedRooms;
 
         const data = [
-            { name: 'Fully Utilized (>80%)', value: fullyUtilized, color: '#10b981' }, // emerald-500
-            { name: 'Moderately Utilized (40-80%)', value: moderatelyUtilized, color: '#f59e0b' }, // amber-500
-            { name: 'Under Utilized (<40%)', value: underUtilized, color: '#f43f5e' } // rose-500
+            { name: 'Fully Utilized (>4 hrs/day)', value: fullyUtilized, color: '#10b981' }, // emerald-500
+            { name: 'Under Utilized (<=4 hrs/day)', value: underUtilized, color: '#f43f5e' } // rose-500
         ];
 
         res.json(data);

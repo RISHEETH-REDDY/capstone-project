@@ -54,6 +54,7 @@ const Layout = ({ children }) => {
     if (user.role === 'faculty' || user.role === 'admin') {
         navItems.push(
             { path: '/analytics', name: 'Analytics', icon: TrendingUp },
+            { path: '/generate', name: 'Generate', icon: Palette, section: 'Management' },
             { path: '/student-view', name: 'Student View', icon: Users, section: 'Management' },
             { path: '/admin-view', name: 'Admin View', icon: ShieldCheck, section: 'Management' }
         );

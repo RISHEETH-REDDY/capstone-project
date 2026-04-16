@@ -284,7 +284,25 @@ const FacultyDashboard = () => {
         try {
             const data = await file.arrayBuffer();
             const workbook = XLSX.read(data, { type: 'array' });
-            const sheetName = workbook.SheetNames[0];
+            
+            // --- 1. Detect Duplicates in Students Sheet ---
+            const studentSheet = workbook.Sheets['Students'];
+            if (studentSheet) {
+                const studentData = XLSX.utils.sheet_to_json(studentSheet);
+                const rollNumbers = {};
+                studentData.forEach((row, i) => {
+                    const roll = row.rollNumber?.toString().trim();
+                    if (!roll) return;
+                    if (rollNumbers[roll]) {
+                        errors.push(`Duplicate Student Found: Roll Number '${roll}' exists multiple times (Rows ${rollNumbers[roll].row} and ${i + 2})`);
+                    } else {
+                        rollNumbers[roll] = { row: i + 2 };
+                    }
+                });
+            }
+
+            // --- 2. Process Timetable Data (Existing Logic) ---
+            const sheetName = workbook.SheetNames.includes('Timetable') ? 'Timetable' : workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const jsonData = XLSX.utils.sheet_to_json(worksheet);
 

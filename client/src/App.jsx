@@ -6,6 +6,7 @@ import StudentDashboard from './pages/StudentDashboard';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Analytics from './pages/Analytics';
+import Generate from './pages/Generate';
 
 const RootRedirect = () => {
   return <Navigate to="/login" />;
@@ -33,6 +34,7 @@ function App() {
               <Route path="/student" element={<ProtectedRoute allowedRoles={['student', 'admin']}><StudentDashboard /></ProtectedRoute>} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/analytics" element={<ProtectedRoute allowedRoles={['faculty', 'admin']}><Analytics /></ProtectedRoute>} />
+              <Route path="/generate" element={<ProtectedRoute allowedRoles={['faculty', 'admin']}><Generate /></ProtectedRoute>} />
             </Routes>
           </Layout>
         } />

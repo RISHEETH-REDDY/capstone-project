@@ -26,11 +26,13 @@ const Generate = () => {
 
     useEffect(() => {
         const fetchBatches = async () => {
+            console.log('Generate Component: Fetching batches...');
             try {
-                const res = await axios.get('/api/batches');
+                const res = await axios.get('/batches');
+                console.log('Generate Component: Batches received:', res.data.length);
                 setBatches(res.data);
             } catch (err) {
-                console.error(err);
+                console.error('Generate Component: Fetch error:', err);
             }
         };
         fetchBatches();
@@ -47,7 +49,7 @@ const Generate = () => {
         setStep(2);
         try {
             const selectedBatchObjects = batches.filter(b => selectedBatches.includes(b._id));
-            const res = await axios.post('/api/generate', { batches: selectedBatchObjects });
+            const res = await axios.post('/generate', { batches: selectedBatchObjects });
             setResult(res.data);
             setStep(3);
         } catch (err) {
@@ -204,8 +206,23 @@ const Generate = () => {
                                     <CheckCircle2 className="text-white w-20 h-20" />
                                 </div>
                                 <div>
-                                    <h2 className="text-5xl font-black tracking-tighter mb-4 leading-tight">Optimization <br /> <span className="text-brand-400 italic">Successful.</span></h2>
-                                    <p className="text-slate-400 font-bold text-xl">{result.length} conflict-free nodes detected across the cluster.</p>
+                                    <div className="flex items-center gap-4 mb-2">
+                                        <h2 className="text-5xl font-black tracking-tighter leading-tight">Optimization <br /> <span className="text-brand-400 italic">Successful.</span></h2>
+                                    </div>
+                                    <div className="flex flex-wrap gap-4 mt-4">
+                                        <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Compute Speed</p>
+                                            <p className="text-xl font-black text-brand-400">{result.performance?.executionTimeMs} ms</p>
+                                        </div>
+                                        <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Optimization Accuracy</p>
+                                            <p className="text-xl font-black text-accent-pink">{result.performance?.accuracyRate}%</p>
+                                        </div>
+                                        <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nodes Resolved</p>
+                                            <p className="text-xl font-black text-white">{result.performance?.scheduledNodes} / {result.performance?.totalNodes}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex flex-wrap gap-5">
@@ -223,11 +240,11 @@ const Generate = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                        {result.map((s, idx) => (
+                        {result.schedule?.map((s, idx) => (
                             <div key={idx} className="pro-card group bg-white border-slate-100 hover:border-brand-500 duration-500">
                                 <div className="flex items-center justify-between mb-8">
                                     <div className="px-5 py-2 bg-slate-900 text-white text-[10px] font-black rounded-2xl uppercase tracking-[0.2em]">{s.day}</div>
-                                    <div className="text-brand-600 font-black text-xs uppercase tracking-widest bg-brand-50 px-4 py-2 rounded-xl group-hover:bg-brand-500 group-hover:text-white transition-colors">{s.timeSlot}</div>
+                                    <div className="text-brand-600 font-black text-xs uppercase tracking-widest bg-brand-50 px-4 py-2 rounded-xl group-hover:bg-brand-500 group-hover:text-white transition-colors">{s.slot}</div>
                                 </div>
                                 <h4 className="text-3xl font-black text-slate-900 mb-6 line-clamp-2 leading-[1.1] tracking-tighter uppercase italic group-hover:text-brand-500 transition-colors">{s.subject.name}</h4>
                                 <div className="space-y-5 pt-8 border-t border-slate-50">

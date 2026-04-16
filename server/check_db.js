@@ -5,6 +5,7 @@ const Faculty = require('./models/Faculty');
 const Batch = require('./models/Batch');
 const Timetable = require('./models/Timetable');
 const Subject = require('./models/Subject');
+const User = require('./models/User');
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ mongoose.connect(process.env.MONGODB_URI)
         const batches = await Batch.countDocuments();
         const timetable = await Timetable.countDocuments();
         const subjects = await Subject.countDocuments();
+        const users = await User.countDocuments();
 
         console.log('--- Database Status ---');
         console.log(`Classrooms: ${classrooms}`);
@@ -23,6 +25,7 @@ mongoose.connect(process.env.MONGODB_URI)
         console.log(`Batches: ${batches}`);
         console.log(`Timetable Entries: ${timetable}`);
         console.log(`Subjects: ${subjects}`);
+        console.log(`Users: ${users}`);
 
         process.exit(0);
     })
