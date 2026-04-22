@@ -16,7 +16,7 @@ const importData = async () => {
         await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
         console.log('MongoDB Connected...');
 
-        const file = 'SmartClass_Final_Scaled (1).xlsx';
+        const file = 'timetable_ready_database (1).xlsx';
         const workbook = XLSX.readFile(file);
 
         // 1. Clear existing data for a clean start
